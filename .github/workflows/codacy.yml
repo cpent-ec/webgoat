@@ -1,0 +1,26 @@
+name: Codacy Security Scan
+on:
+  push:
+    branches: ["master", "main"]
+  pull_request:
+    branches: ["master", "main"]
+
+jobs:
+  codacy-security-scan:
+    name: Codacy Security Scan
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@main
+      - name Run Codacy Ananlysis CLI
+        uses: codacy/codacy-analysis-cli-action@master
+        with:
+          api-token: ${{secrets.CODACY_API_TOKEN}}
+          output: results.sarif
+          format: sarif
+          gh-code-scanning-compat: true
+          max-allowed-issues: 2147483647
+          
+      - name: Upload SARIF results file
+        uses: github/codeql-action/upload-sarif@main
+        with:
+          sarif_file: results.sarif
